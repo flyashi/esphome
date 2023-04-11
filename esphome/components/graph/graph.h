@@ -158,6 +158,7 @@ class Graph : public Component {
   uint32_t get_duration() { return duration_; }
   uint32_t get_width() { return width_; }
   uint32_t get_height() { return height_; }
+  void add_gridline_y(float y) { gridlines_y_.push_back(y); }
 
  protected:
   uint32_t duration_;  /// in seconds
@@ -169,6 +170,7 @@ class Graph : public Component {
   float max_range_{NAN};
   float gridspacing_x_{NAN};
   float gridspacing_y_{NAN};
+  std::vector<float> gridlines_y_;
   bool border_{true};
   std::vector<GraphTrace *> traces_;
   GraphLegend *legend_{nullptr};
