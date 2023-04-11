@@ -153,6 +153,16 @@ void Graph::draw(DisplayBuffer *buff, uint16_t x_offset, uint16_t y_offset, Colo
     }
   }
 
+  /// Draw manual grid
+  if (!gridlines_y_.empty()) {
+    for (int y : this->gridlines_y_) {
+      int16_t py = (int16_t) roundf((this->height_ - 1) * (1.0 - (float) (y - yn) / (ym - yn)));
+      for (uint32_t x = 0; x < this->width_; x += 2) {
+        buff->draw_pixel_at(x_offset + x, y_offset + py, color);
+      }
+    }  
+  }
+
   /// Draw traces
   ESP_LOGV(TAG, "Updating graph. ymin %f, ymax %f", ymin, ymax);
   for (auto *trace : traces_) {

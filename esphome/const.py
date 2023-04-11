@@ -796,6 +796,8 @@ CONF_WIND_SPEED = "wind_speed"
 CONF_WINDOW_SIZE = "window_size"
 CONF_WRITE_PIN = "write_pin"
 CONF_X_GRID = "x_grid"
+CONF_X_GRIDLINES = "x_gridlines"
+CONF_Y_GRIDLINES = "y_gridlines"
 CONF_Y_GRID = "y_grid"
 CONF_ZERO = "zero"
 
