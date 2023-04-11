@@ -118,7 +118,7 @@ void Graph::draw(DisplayBuffer *buff, uint16_t x_offset, uint16_t y_offset, Colo
     while (yrange > 10 * y_per_div) {
       y_per_div *= 2;
     }
-    ESP_LOGW(TAG, "Graphing reducing y-scale to prevent too many gridlines");
+    ESP_LOGW(TAG, "Graphing reducing y-scale to prevent too many gridlines, y_per_div=%d", y_per_div);
   }
 
   // Adjust limits to nice y_per_div boundaries
@@ -156,7 +156,10 @@ void Graph::draw(DisplayBuffer *buff, uint16_t x_offset, uint16_t y_offset, Colo
   /// Draw manual grid
   if (!gridlines_y_.empty()) {
     for (int y : this->gridlines_y_) {
-      int16_t py = (int16_t) roundf((this->height_ - 1) * (1.0 - (float) (y - yn) / (ym - yn)));
+
+      int16_t py = (int16_t) roundf((this->height_ - 1) * (1.0 - (float) (y - ymin) / (ymax - ymin)));
+      ESP_LOGVV(TAG, "drawing horizontal border line x_off=%d y_off=%d y=%d yn=%d ym=%d ymax=%d ymin=%d py=%d", x_offset, y_offset, y, yn, ym, ymax, ymin, py);
+
       for (uint32_t x = 0; x < this->width_; x += 2) {
         buff->draw_pixel_at(x_offset + x, y_offset + py, color);
       }
