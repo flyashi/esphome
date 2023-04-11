@@ -27,6 +27,8 @@ from esphome.const import (
     CONF_Y_GRID,
     CONF_BORDER,
     CONF_TRACES,
+    CONF_X_GRIDLINES,
+    CONF_Y_GRIDLINES,
 )
 
 CODEOWNERS = ["@synco"]
@@ -110,6 +112,7 @@ GRAPH_SCHEMA = cv.Schema(
         cv.Optional(CONF_MAX_RANGE): cv.float_range(min=0, min_included=False),
         cv.Optional(CONF_TRACES): cv.ensure_list(GRAPH_TRACE_SCHEMA),
         cv.Optional(CONF_LEGEND): cv.ensure_list(GRAPH_LEGEND_SCHEMA),
+        cv.Optional(CONF_Y_GRIDLINES): cv.ensure_list(cv.float_),
     }
 )
 
@@ -159,6 +162,15 @@ async def to_code(config):
         cg.add(var.set_grid_x(config[CONF_X_GRID]))
     if CONF_Y_GRID in config:
         cg.add(var.set_grid_y(config[CONF_Y_GRID]))
+
+    if CONF_Y_GRIDLINES in config:
+        for y in config[CONF_Y_GRIDLINES]:
+            cg.add(var.add_gridline_y(y))
+    if CONF_X_GRIDLINES in config:
+        for x in config[CONF_X_GRIDLINES]:
+          # TODO(flyashi): add x gridlines support
+          # cg.add(var.add_gridline_y(y))
+          pass
     if CONF_BORDER in config:
         cg.add(var.set_border(config[CONF_BORDER]))
     # Axis related options
