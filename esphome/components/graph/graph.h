@@ -89,11 +89,12 @@ class HistoryData {
   ~HistoryData();
   void set_update_time_ms(uint32_t update_time_ms) { update_time_ = update_time_ms; }
   void take_sample(float data);
+  void take_sample(float data, uint32_t tm);
   int get_length() const { return length_; }
   float get_value(int idx) const { return samples_[(count_ + length_ - 1 - idx) % length_]; }
   float get_recent_max() const { return recent_max_; }
   float get_recent_min() const { return recent_min_; }
-
+  void load_with_timestamps(std::vector<float> data, std::vector<uint32_t> millis);
  protected:
   uint32_t last_sample_;
   uint32_t period_{0};       /// in ms
@@ -117,7 +118,7 @@ class GraphTrace {
   Color get_line_color() { return this->line_color_; }
   void set_line_color(Color val) { this->line_color_ = val; }
   std::string get_name() { return name_; }
-  const HistoryData *get_tracedata() { return &data_; }
+  HistoryData *get_tracedata() { return &data_; }
 
  protected:
   sensor::Sensor *sensor_{nullptr};
@@ -155,6 +156,7 @@ class Graph : public Component {
     this->legend_ = legend;
     legend->init(this);
   }
+  std::vector<GraphTrace *> get_traces() { return traces_; }
   uint32_t get_duration() { return duration_; }
   uint32_t get_width() { return width_; }
   uint32_t get_height() { return height_; }

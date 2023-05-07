@@ -22,17 +22,21 @@ void HistoryData::init(int length) {
 }
 
 void HistoryData::take_sample(float data) {
-  uint32_t tm = millis();
+  this->take_sample( data, millis());
+}
+
+void HistoryData::take_sample(float data, uint32_t tm) {
   uint32_t dt = tm - last_sample_;
   last_sample_ = tm;
 
   // Step data based on time
   this->period_ += dt;
   while (this->period_ >= this->update_time_) {
+    ESP_LOGV(TAG, "About to update trace with value; count=%d period=%d update_time=%d dt=%d", this->count_, this->period_, this->update_time_, dt);
     this->samples_[this->count_] = data;
     this->period_ -= this->update_time_;
     this->count_ = (this->count_ + 1) % this->length_;
-    ESP_LOGV(TAG, "Updating trace with value: %f", data);
+    ESP_LOGV(TAG, "Updating trace with value: %f new: count=%d period=%d", data, this->count_, this->period_);
   }
   if (!std::isnan(data)) {
     // Recalc recent max/min
@@ -49,10 +53,19 @@ void HistoryData::take_sample(float data) {
   }
 }
 
+void HistoryData::load_with_timestamps(std::vector<float> data, std::vector<uint32_t> millis) {
+// data are saved with respect to graph width.
+// more data points than pixels -> data are repeated
+// less data points than pixels -> ???
+  
+}
+
 void GraphTrace::init(Graph *g) {
   ESP_LOGI(TAG, "Init trace for sensor %s", this->get_name().c_str());
   this->data_.init(g->get_width());
-  sensor_->add_on_state_callback([this](float state) { this->data_.take_sample(state); });
+  if (sensor_) {
+    sensor_->add_on_state_callback([this](float state) { this->data_.take_sample(state); });
+  }
   this->data_.set_update_time_ms(g->get_duration() * 1000 / g->get_width());
 }
 
